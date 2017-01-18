@@ -23,14 +23,15 @@ struct Token *getToken (FILE *ifp)
 	{
 		char *p = inputs;
 		int i = 0;
+		offset = 0;
 		while (*p)
 		{
 			int len = getUlen(p);
-			i++;
 			if (i+len >= INPUT_BUFFER) {
 				for (offset = 0; *p; offset++, p++) inputs[offset] = *p;
 				break;
 			}
+			i+=len;
 
 			int32_t unicode = getUnicode(p);
 			p+=len;
