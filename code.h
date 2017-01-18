@@ -20,6 +20,7 @@ struct Heart_Tree {
 
 struct Code {
 	enum OPCODE opcode;
+	int code_num;
 	int charcnt, dotcnt;
 	struct Code *next;
 	struct Heart_Tree *tree;

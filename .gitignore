@@ -6,3 +6,5 @@ Release/
 *.sln
 *.vcxproj
 *.filters
+*.o
+hyeong

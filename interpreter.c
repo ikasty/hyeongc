@@ -163,7 +163,46 @@ void (*operator[OP_LENGTH])(struct Code *, struct Heart_Tree *) = {NULL,
 	&Op_Push, &Op_Add, &Op_Mul, &Op_Neg, &Op_Inv, &Op_Copy
 };
 
-void interpret(struct Code *code)
+char *codestr[OP_LENGTH] = {"",
+	"Push %lld * %lld", "Pop #%lld, Add and Push to %lld",
+	"Pop #%lld, Mul and Push to %lld", "Pop #%lld, Neg, Add and Push to %lld",
+	"Pop #%lld, Inv, Mul and Push to %lld", "Pop, Copy #%lld, and Change %lld",
+	"Save", "Ref", "Compare less", "Compare zero"
+};
+
+void print_debug_info (struct Code *code)
+{
+	printf("Current codenum: %d, ",	code->code_num);
+	printf(codestr[code->opcode], code->charcnt, code->dotcnt);
+	printf("\nStack info:\n");
+	for (int i = 0; i < 10; i++)
+	{
+		struct Stack *stack_debug = Stack_Hash[i];
+		while (stack_debug)
+		{
+			if (stack_debug == stack_stdin ||
+			    stack_debug == stack_stdout ||
+			    stack_debug == stack_stderr)
+			{
+				stack_debug = stack_debug->next;
+				continue;
+			}
+			printf("\tStack #%d: |", stack_debug->stack_value);
+
+			struct Value *v = stack_debug->value;
+			while (v)
+			{
+				printf(" (%lld/%lld)", v->top, v->bottom * !v->nan);
+				v = v->stackp;
+			}
+			puts("");
+
+			stack_debug = stack_debug->next;
+		}
+	}
+}
+
+void interpret(struct Code *code, int debug)
 {
 	// create default stack
 	stack_stdin  = Stack_Hash[0] = malloc(sizeof(struct Stack));
@@ -181,6 +220,8 @@ void interpret(struct Code *code)
 	{
 		(*operator[code->opcode])(code, NULL);
 		if (code->tree) (*operator[code->tree->opcode])(code, code->tree);
+
+		if (debug) print_debug_info(code);
 		code = code->next;
 	}
 }

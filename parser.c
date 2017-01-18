@@ -19,10 +19,12 @@ struct Code *parse (char *filename)
 
 	state.token = getToken(ifp);
 
+	int codenum = 0;
 	while (state.token)
 	{
 		Parse_token(&state);
 		if (!state.code->opcode) continue;
+		state.code->code_num = ++codenum;
 		state.code = state.code->next = malloc(sizeof(struct Code));
 		*state.code = CODE_NULL;
 	}
