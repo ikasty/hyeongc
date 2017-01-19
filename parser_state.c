@@ -40,9 +40,9 @@ void Parse_token (struct State *s)
 {
 	while (1)
 	{
-		if (s->token->value == SPACE) return consume(s);
 		if (!s->token) return ;
-		if (!isStartKorean(s->token)) consume(s);
+		else if (s->token->value == SPACE) consume(s);
+		else if (!isStartKorean(s->token)) consume(s);
 		else break;
 	}
 
@@ -70,11 +70,10 @@ void Parse_Korean (struct State *s)
 {
 	while (1)
 	{
-		if (s->token->value == SPACE) return consume(s);
 		if (!s->token) return ;
-		if (isEndKorean(s->token)) break;
-
-		if (s->token->value != STR) consume(s);
+		else if (s->token->value == SPACE) consume(s);
+		else if (isEndKorean(s->token)) break;
+		else if (s->token->value != STR) consume(s);
 		else {
 			s->code->charcnt++;
 			consume(s);
@@ -123,11 +122,15 @@ int isHeart (struct Token *t)
 	return (t->value == HEART) || (t->value == REF);
 }
 
+int isSplit (struct Token *t)
+{
+	return (t->value == QUES) || (t->value == BANG);
+}
+
 void Parse_dot (struct State *s)
 {
 	while (1)
 	{
-		if (s->token->value == SPACE) return consume(s);
 		if (!s->token) return ;
 		if (isStartKorean(s->token)) return ;
 		if (isHeartSection(s->token)) {
@@ -145,15 +148,8 @@ void Parse_dot (struct State *s)
 
 struct Heart_Tree *getHeart (struct State *s)
 {
-	while (!isHeartSection(s->token) && s->token->value != SPACE)
-		consume(s);
-
-	if (s->token->value == SPACE) {
-		consume(s);
-		return NULL;
-	}
-
-	if (s->token->value == BANG || s->token->value == QUES) return NULL;
+	while (!isHeartSection(s->token)) consume(s);
+	if (isSplit(s->token)) return NULL;
 	
 	struct Heart_Tree *heart = malloc(sizeof(struct Heart_Tree));
 	*heart = HEART_TREE_NULL;
@@ -163,7 +159,7 @@ struct Heart_Tree *getHeart (struct State *s)
 	heart->value = s->token->subvalue;
 	heart->code = s->code;
 
-	while (isHeart(s->token)) consume(s);
+	while (!isSplit(s->token) && !isStartKorean(s->token)) consume(s);
 
 	return heart;
 }
@@ -171,31 +167,32 @@ struct Heart_Tree *getHeart (struct State *s)
 struct Heart_Tree *Parse_Bang (struct State *s)
 {
 	struct Heart_Tree *heart = getHeart(s);
-	if (s->token->value == BANG) {
-		struct Heart_Tree *tree = malloc(sizeof(struct Heart_Tree));
-		*tree = HEART_TREE_NULL;
 
-		tree->opcode = OP_COMPZ;
-		tree->left = heart;
-		tree->right = Parse_Bang(s);
-		heart = tree;
-	}
+	if (isStartKorean(s->token)) return heart;
+	if (s->token->value == QUES) return heart;
 
-	return heart;
+	struct Heart_Tree *tree = malloc(sizeof(struct Heart_Tree));
+	*tree = HEART_TREE_NULL;
+
+	tree->opcode = OP_COMPZ;
+	tree->left = heart;
+	tree->right = Parse_Bang(s);
+
+	return tree;
 }
 
 struct Heart_Tree *Parse_Ques (struct State *s)
 {
 	struct Heart_Tree *heart = Parse_Bang(s);
-	if (s->token->value == QUES) {
-		struct Heart_Tree *tree = malloc(sizeof(struct Heart_Tree));
-		*tree = HEART_TREE_NULL;
 
-		tree->opcode = OP_COMPL;
-		tree->left = heart;
-		tree->right = Parse_Ques(s);
-		heart = tree;
-	}
+	if (isStartKorean(s->token)) return heart;
 
-	return heart;
+	struct Heart_Tree *tree = malloc(sizeof(struct Heart_Tree));
+	*tree = HEART_TREE_NULL;
+
+	tree->opcode = OP_COMPL;
+	tree->left = heart;
+	tree->right = Parse_Ques(s);
+
+	return tree;
 }

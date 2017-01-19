@@ -1,76 +1,75 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "parser.h"
 #include "interpreter.h"
+#include "debug.h"
+
+#define LANG_VER "v0.4.4"
+#define COMP_VER "v0.4.4"
 
 struct {
-	int debug;
+	int debug, parseonly;
 	char *filename;
 } options;
 
-void version ()
+void help (int code)
 {
 	printf(
-		" 난해한 혀엉...언어 v0.4.3 구현체\n"
-		" 혀엉씨 v0.4.3\n"
+		" 난해한 혀엉...언어 " LANG_VER " 구현체\n"
+		" 혀엉씨 " COMP_VER "\n\n"
+
+		" 사용법: hyeongc [options] [--] 파일명\n\n"
+
+		"\t-v, --version,\n"
+		"\t-h, --help     현재 메시지를 출력합니다.\n"
+		"\t-d, --debug    디버그 메시지를 출력합니다.\n"
+		"\t--parse-only   실행하지 않고, 파싱 결과만을 출력합니다.\n"
 	);
 
-	exit(0);
-}
-
-void error (int err, char *message)
-{
-	if (err) {
-		printf("잘못된 옵션이 있습니다");
-		if (message) printf(": %s", message);
-		printf("\n");
-	}
-
-	printf("사용법: hyeong {파일명}\n");
-	exit(1);
+	exit(code);
 }
 
 void getOptions (int argc, char **argv)
 {
-	int current = 1;
-	int mode = 0;
-	char *p = argv[current];
-
-	while (current < argc)
+	int i;
+	for (i = 1; i < argc; i++)
 	{
-		switch (*p)
-		{
-		case '\0':
-			current++;
-			p=argv[current];
-			if (mode == 3) mode = 0; // '-- filename option'
-			else if (mode == 1) return error(1, "옵션이 주어지지 않았습니다");
-			else if (mode == 2) mode = 0;
-			continue;
-		case '-':
-			if (!mode) { mode = 1; break; }
-			else if (mode) { mode = 3; break; }
+		if (argv[i][0] != '-') break;
+		if (!strcmp(argv[i], "--")) {i++; break;}
 
-		case 'd':
-			if (mode && mode < 3) { options.debug = 1; mode = 2; }
-			break;
+		if (!strcmp(argv[i], "-d")) options.debug = 1;
+		if (!strcmp(argv[i], "-v")) return help(0);
+		if (!strcmp(argv[i], "-h")) return help(0);
 
-		case 'v':
-			if (mode && mode < 3) version();
-		}
-		if (!mode) { options.filename = p; return ; }
-		p++;
+		if (!strcmp(argv[i], "--debug"))		options.debug = 1;
+		if (!strcmp(argv[i], "--version"))		return help(0);
+		if (!strcmp(argv[i], "--help"))			return help(0);
+		if (!strcmp(argv[i], "--parse-only"))	options.parseonly = 1;
 	}
+	options.filename = argv[i];
 }
 
 int main (int argc, char **argv)
 {
 	getOptions(argc, argv);
 
-	if (!options.filename) error(0, NULL);
+	if (!options.filename) {
+		printf("에러: 파일명이 주어지지 않았습니다.\n");
+		help(1);
+	}
 
-	struct Code *code = parse(options.filename);
-	interpret(code, options.debug);
+	int max_code;
+	struct Code *code = parse(&max_code, options.filename);
+	if (options.parseonly) {
+		struct Code *p = code;
+		do
+		{
+			print_debug_info(max_code, p);
+			p = p->next;
+		} while (p != code);
+	}
+	else interpret(code, options.debug, max_code);
 
 	return 0;
 }

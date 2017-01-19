@@ -9,7 +9,7 @@
 struct Code *code_head;
 struct State state;
 
-struct Code *parse (char *filename)
+struct Code *parse (int *codenum, char *filename)
 {
 	FILE *ifp = fopen(filename, "r");
 	if (ifp == NULL) return NULL;
@@ -19,12 +19,12 @@ struct Code *parse (char *filename)
 
 	state.token = getToken(ifp);
 
-	int codenum = 0;
+	*codenum = 0;
 	while (state.token)
 	{
 		Parse_token(&state);
 		if (!state.code->opcode) continue;
-		state.code->code_num = ++codenum;
+		state.code->code_num = ++*codenum;
 		state.code = state.code->next = malloc(sizeof(struct Code));
 		*state.code = CODE_NULL;
 	}

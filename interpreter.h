@@ -4,6 +4,6 @@
 #include "code.h"
 #include "value.h"
 
-void interpret(struct Code *code, int debug);
+void interpret(struct Code *, int, int);
 
 #endif
