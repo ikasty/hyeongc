@@ -4,7 +4,7 @@
 
 #include "token.h"
 
-int isKorean (int32_t);
+int isKoreanUnicode (int32_t);
 int getUlen (char *);
 int32_t getUnicode (char *);
 
@@ -73,7 +73,7 @@ struct Token *getToken (FILE *ifp)
 			case ' ': case '\t': case '\r': case '\n':
 				tkn->value = SPACE; break;
 			default:
-				if (isKorean(unicode)) tkn->value = STR;
+				if (isKoreanUnicode(unicode)) tkn->value = STR;
 				else tkn->value = NUL;
 			}
 			tkn->unicode = unicode;
@@ -86,7 +86,7 @@ struct Token *getToken (FILE *ifp)
 	return token_head;
 }
 
-int isKorean (int32_t unicode) {
+int isKoreanUnicode (int32_t unicode) {
 	return unicode >= 0xAC00 && unicode <= 0xD7A3;
 }
 

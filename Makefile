@@ -15,4 +15,5 @@ parser_state.o: parser_state.c parser_state.h token.h parser.h
 token.o: token.c token.h 
 interpreter.o: interpreter.c interpreter.h code.h debug.h
 value.o: value.c value.h
-debug.o: debug.c debug.h
+debug.o: debug.c debug.h code.h
+

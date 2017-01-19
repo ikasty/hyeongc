@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include "debug.h"
+#include "code.h"
 
 char *codestr[OP_LENGTH] = {"",
-	"형", "항", "핫", "흣", "흡", "흑"
-	"", "♡", "?", "!"
+	"형", "항", "핫", "흣", "흡", "흑", "❤", "♡", "?", "!"
 };
 
 char *heartstr[] = {"",
@@ -12,22 +12,29 @@ char *heartstr[] = {"",
 
 void print_tree (struct Heart_Tree *t)
 {
-	if (t->opcode == OP_SAVE) printf("%s", heartstr[t->value]);
-	else printf("%s", codestr[t->opcode]);
+	if (!t) {putchar('_'); return ;}
 
-	if (t->left) print_tree(t->left);
-	if (t->right) print_tree(t->right);
+	if (t->opcode == OP_SAVE) printf("%s", heartstr[t->value]);
+	else if (t->opcode == OP_REF) printf("%s", codestr[t->opcode]);
+	else {
+		printf("%s", codestr[t->opcode]);
+		print_tree(t->left);
+		print_tree(t->right);
+	}
 }
 
 void print_debug_info (int max_len, struct Code *code)
 {
-	printf("[%*d] ", max_len, code->code_num);
+	int len;
+	for (len = 0; max_len; max_len /= 10, len++);
+
+	printf("[%*d] ", len, code->code_num);
 	printf("%s %d %d", codestr[code->opcode], code->charcnt, code->dotcnt);
-	print_tree(code->tree);
+	if (code->tree) putchar(' '), print_tree(code->tree);
 	puts("");
 }
 
-void print_stack_info (struct Code *code)
+void print_stack_info (struct Code *code, struct Stack *Stack_Hash[10])
 {
 	printf("\n스택 정보:\n");
 	for (int i = 0; i < 10; i++)
@@ -35,9 +42,9 @@ void print_stack_info (struct Code *code)
 		struct Stack *stack_debug = Stack_Hash[i];
 		while (stack_debug)
 		{
-			if (stack_debug == stack_stdin ||
-			    stack_debug == stack_stdout ||
-			    stack_debug == stack_stderr)
+			if (stack_debug->stack_value == 0 ||
+			    stack_debug->stack_value == 1 ||
+			    stack_debug->stack_value == 2)
 			{
 				stack_debug = stack_debug->next;
 				continue;

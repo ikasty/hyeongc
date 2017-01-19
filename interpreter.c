@@ -5,12 +5,6 @@
 #include "debug.h"
 #include "value.h"
 
-struct Stack {
-	int stack_value;
-	struct Stack *next;
-	struct Value *value;
-} STACK_NULL;
-
 struct Pointer {
 	struct Code *pos;
 };
@@ -184,7 +178,7 @@ void interpret(struct Code *code, int debug, int max_code)
 	{
 		if (debug) {
 			print_debug_info(max_code, code);
-			print_stack_info(code);
+			print_stack_info(code, Stack_Hash);
 		}
 
 		(*operator[code->opcode])(code, NULL);

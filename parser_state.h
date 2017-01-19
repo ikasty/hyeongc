@@ -12,7 +12,7 @@ struct State {
 
 // init state
 void Parse_token (struct State *);
-void Parse_Korean (struct State *);
+void Parse_End_Korean (struct State *);
 void Parse_dot (struct State *);
 struct Heart_Tree *Parse_Ques(struct State *);
 
