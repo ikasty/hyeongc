@@ -5,12 +5,15 @@
 #include "debug.h"
 #include "value.h"
 
-struct Pointer {
-	struct Code *pos;
-};
+struct Pointers {
+	int tag;
+	struct Code *code;
+	struct Pointers *next;
+} POINTER_NULL;
 
 struct Stack *Stack_Hash[10], *stack_stdin, *stack_stdout, *stack_stderr, *stack_current;
-struct Pointer Pointers[11], *ref;
+struct Pointers *Pointers[12];
+struct Code *current, *ref;
 
 struct Stack *getStack (int d)
 {
@@ -70,6 +73,22 @@ struct Value *pop (struct Stack *s)
 	}
 	return v;
 }
+
+void Op_Push (struct Code *code, struct Heart_Tree *tree);
+void Op_Add (struct Code *code, struct Heart_Tree *tree);
+void Op_Mul (struct Code *code, struct Heart_Tree *tree);
+void Op_Neg (struct Code *code, struct Heart_Tree *tree);
+void Op_Inv (struct Code *code, struct Heart_Tree *tree);
+void Op_Copy (struct Code *code, struct Heart_Tree *tree);
+void Op_Save (struct Code *code, struct Heart_Tree *tree);
+void Op_Ref (struct Code *code, struct Heart_Tree *tree);
+void Op_CompL (struct Code *code, struct Heart_Tree *tree);
+void Op_CompZ (struct Code *code, struct Heart_Tree *tree);
+
+void (*operator[OP_LENGTH])(struct Code *, struct Heart_Tree *) = {NULL,
+	&Op_Push, &Op_Add, &Op_Mul, &Op_Neg, &Op_Inv, &Op_Copy,
+	&Op_Save, &Op_Ref, &Op_CompL, &Op_CompZ
+};
 
 void Op_Push (struct Code *code, struct Heart_Tree *tree)
 {
@@ -155,10 +174,52 @@ void Op_Copy (struct Code *code, struct Heart_Tree *tree)
 	stack_current = stack_target;
 }
 
+void Op_Save (struct Code *code, struct Heart_Tree *tree)
+{
+	struct Pointers *pointer = Pointers[tree->value];
+	int tag = code->charcnt * code->dotcnt;
 
-void (*operator[OP_LENGTH])(struct Code *, struct Heart_Tree *) = {NULL,
-	&Op_Push, &Op_Add, &Op_Mul, &Op_Neg, &Op_Inv, &Op_Copy
-};
+	while (pointer && pointer->tag != tag) pointer = pointer->next;
+	if (!pointer) {
+		pointer = malloc(sizeof(struct Pointers));
+		*pointer = POINTER_NULL;
+		pointer->next = Pointers[tree->value];
+		Pointers[tree->value] = pointer;
+	}
+
+	if (!pointer->code) pointer->code = current;
+	else {
+		current = pointer->code;
+		ref = code;
+	}
+}
+
+void Op_Ref (struct Code *code, struct Heart_Tree *tree)
+{
+	if (ref) current = ref;
+}
+
+void Op_CompL (struct Code *code, struct Heart_Tree *tree)
+{
+	struct Value *v = pop(stack_current);
+	if (ValueLess(v, (long long)code->charcnt * code->dotcnt))
+		tree = tree->left;
+	else
+		tree = tree->right;
+
+	if (tree) (*operator[tree->opcode])(code, tree);
+}
+
+void Op_CompZ (struct Code *code, struct Heart_Tree *tree)
+{
+	struct Value *v = pop(stack_current);
+	if (ValueEqual(v, (long long)code->charcnt * code->dotcnt))
+		tree = tree->left;
+	else
+		tree = tree->right;
+
+	if (tree) (*operator[tree->opcode])(code, tree);
+}
 
 void interpret(struct Code *code, int debug, int max_code)
 {
@@ -173,17 +234,17 @@ void interpret(struct Code *code, int debug, int max_code)
 	stack_stdout->stack_value = 1;
 	stack_stderr->stack_value = 2;
 	stack_current->stack_value = 3;
+	current = code;
 
 	while (1)
 	{
 		if (debug) {
-			print_debug_info(max_code, code);
-			print_stack_info(code, Stack_Hash);
+			print_debug_info(max_code, current);
+			print_stack_info(current, Stack_Hash);
 		}
 
-		(*operator[code->opcode])(code, NULL);
-		if (code->tree) (*operator[code->tree->opcode])(code, code->tree);
-
-		code = code->next;
+		(*operator[current->opcode])(current, NULL);
+		if (current->tree) (*operator[current->tree->opcode])(current, current->tree);
+		else current = current->next;
 	}
 }

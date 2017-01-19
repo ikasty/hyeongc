@@ -197,7 +197,6 @@ struct Heart_Tree *getHeart (struct State *s)
 	if (s->token->value == HEART) heart->opcode = OP_SAVE;
 	else heart->opcode = OP_REF;
 	heart->value = s->token->subvalue;
-	heart->code = s->code;
 	consume(s);
 
 	while (!isSplit(s->token) && !isStartKorean(s->token)) consume(s);

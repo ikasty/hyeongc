@@ -79,3 +79,17 @@ struct Value *ValueCopy (const struct Value *a)
 	*v = *a;
 	return v;
 }
+
+int ValueLess (const struct Value *a, const long long x)
+{
+	if (a->nan) return 0;
+	long long avalue = a->top / a->bottom;
+	return avalue < x;
+}
+
+int ValueEqual (const struct Value *a, const long long x)
+{
+	if (a->nan) return 0;
+	long long avalue = a->top / a->bottom;
+	return avalue == x;
+}

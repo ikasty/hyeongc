@@ -14,7 +14,6 @@ struct Code;
 struct Heart_Tree {
 	enum OPCODE opcode;
 	int value;
-	struct Code *code;
 	struct Heart_Tree *left, *right;
 } HEART_TREE_NULL;
 
