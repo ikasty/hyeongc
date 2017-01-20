@@ -59,6 +59,7 @@ void push (struct Stack *s, struct Value *v)
 		}
 		else fprintf(stderr, "%lld", -v->top / v->bottom);
 	} else {
+		if (options.debug) options.last_push = (void*)v;
 		v->stackp = s->value;
 		s->value = v;
 	}
@@ -70,10 +71,13 @@ struct Value *pop (struct Stack *s)
 	if (s == stack_stdin) {
 		// stack_stdin control
 	} else if (s == stack_stdout) {
+		if (options.debug) print_program_end(0);
 		exit(0);
 	} else if (s == stack_stderr) {
+		if (options.debug) print_program_end(1);
 		exit(1);
 	} else {
+		if (options.debug) options.pop_stack = s->stack_value;
 		v = s->value;
 		if (!v) {
 			v = getNewValue();
@@ -249,16 +253,23 @@ void interpret(struct Code *code)
 	stack_current->stack_value = 3;
 	current = code;
 
+	if (options.debug) print_debug_start();
+
 	while (1)
 	{
 		if (options.debug) {
+			puts("");
 			print_debug_info(current);
 			print_stack_info(current, Stack_Hash);
+			getchar();
+			print_value_start();
 		}
 
 		(*operator[current->opcode])(current, NULL);
 		if (current->tree)
 			(*operator[current->tree->opcode])(current, current->tree);
 		else current = current->next;
+
+		if (options.debug) print_value_end();
 	}
 }

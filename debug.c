@@ -11,6 +11,11 @@ char *heartstr[] = {"",
 	"♥", "❤", "💕", "💖", "💗", "💘", "💙", "💚", "💛", "💜", "💝"
 };
 
+void print_debug_start ()
+{
+	printf("프로그램을 실행합니다 (아무 키나 누르세요):");
+}
+
 void print_tree (struct Heart_Tree *t)
 {
 	if (!t) {putchar('_'); return ;}
@@ -38,7 +43,7 @@ void print_debug_info (struct Code *code)
 
 void print_stack_info (struct Code *code, struct Stack *Stack_Hash[10])
 {
-	printf("\n스택 정보:\n");
+	printf("스택 정보:\n");
 	for (int i = 0; i < 10; i++)
 	{
 		struct Stack *stack_debug = Stack_Hash[i];
@@ -51,12 +56,23 @@ void print_stack_info (struct Code *code, struct Stack *Stack_Hash[10])
 				stack_debug = stack_debug->next;
 				continue;
 			}
+			if (stack_debug->stack_value == options.pop_stack) {
+				printf("\033[1;31m");
+				options.pop_stack = 0;
+			}
 			printf("\t%d번 스택: ->", stack_debug->stack_value);
+			printf("\033[0m");
 
 			struct Value *v = stack_debug->value;
 			while (v)
 			{
-				printf(" (%lld/%lld)", v->top, v->bottom * !v->nan);
+				if (v == options.last_push) {
+					printf("\033[1;33m");
+					options.last_push = NULL;
+				}
+				if (v->nan) printf(" (NaN)");
+				else printf(" (%lld/%lld)", v->top, v->bottom);
+				printf("\033[0m");
 				v = v->stackp;
 			}
 			puts("");
@@ -64,4 +80,21 @@ void print_stack_info (struct Code *code, struct Stack *Stack_Hash[10])
 			stack_debug = stack_debug->next;
 		}
 	}
+}
+
+void print_value_start ()
+{
+	printf("출력 내용: \033[1;36m");
+}
+
+void print_value_end ()
+{
+	printf("\033[0m\n");
+}
+
+void print_program_end(int endcode)
+{
+	printf("\033[0m");
+	if (endcode) printf("\n\n프로그램이 비정상적으로 종료되었습니다\n");
+	else printf("\n\n프로그램이 정상적으로 종료되었습니다\n");
 }
