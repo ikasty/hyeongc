@@ -216,6 +216,7 @@ void Op_CompL (struct Code *code, struct Heart_Tree *tree)
 		tree = tree->left;
 	else
 		tree = tree->right;
+	free(v);
 
 	if (tree) (*operator[tree->opcode])(code, tree);
 }
@@ -227,6 +228,7 @@ void Op_CompZ (struct Code *code, struct Heart_Tree *tree)
 		tree = tree->left;
 	else
 		tree = tree->right;
+	free(v);
 
 	if (tree) (*operator[tree->opcode])(code, tree);
 }
