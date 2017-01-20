@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "debug.h"
 #include "code.h"
+#include "options.h"
 
 char *codestr[OP_LENGTH] = {"",
 	"형", "항", "핫", "흣", "흡", "흑", "❤", "♡", "?", "!"
@@ -23,9 +24,10 @@ void print_tree (struct Heart_Tree *t)
 	}
 }
 
-void print_debug_info (int max_len, struct Code *code)
+void print_debug_info (struct Code *code)
 {
 	int len;
+	int max_len = options.max_len;
 	for (len = 0; max_len; max_len /= 10, len++);
 
 	printf("[%*d] ", len, code->code_num);

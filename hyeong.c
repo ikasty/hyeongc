@@ -1,17 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include "parser.h"
 #include "interpreter.h"
 #include "debug.h"
+#include "options.h"
 
 #define LANG_VER "v0.4.4"
 #define COMP_VER "v0.4.4.2"
 
-struct {
-	int debug, parseonly;
-	char *filename;
-} options;
+struct Options options;
 
 void help (int code)
 {
@@ -59,17 +58,16 @@ int main (int argc, char **argv)
 		help(1);
 	}
 
-	int max_code;
-	struct Code *code = parse(&max_code, options.filename);
+	struct Code *code = parse(options.filename);
 	if (options.parseonly) {
 		struct Code *p = code;
 		do
 		{
-			print_debug_info(max_code, p);
+			print_debug_info(p);
 			p = p->next;
 		} while (p != code);
 	}
-	else interpret(code, options.debug, max_code);
+	else interpret(code);
 
 	return 0;
 }

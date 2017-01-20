@@ -10,6 +10,6 @@ struct Stack {
 	struct Value *value;
 } STACK_NULL;
 
-void interpret(struct Code *, int, int);
+void interpret(struct Code *);
 
 #endif

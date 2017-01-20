@@ -5,6 +5,7 @@
 #include "value.h"
 #include "unicode.h"
 #include "interpreter.h"
+#include "options.h"
 
 struct Pointers {
 	int tag;
@@ -233,7 +234,7 @@ void Op_CompZ (struct Code *code, struct Heart_Tree *tree)
 	if (tree) (*operator[tree->opcode])(code, tree);
 }
 
-void interpret(struct Code *code, int debug, int max_code)
+void interpret(struct Code *code)
 {
 	// create default stack
 	stack_stdin  = Stack_Hash[0] = malloc(sizeof(struct Stack));
@@ -250,8 +251,8 @@ void interpret(struct Code *code, int debug, int max_code)
 
 	while (1)
 	{
-		if (debug) {
-			print_debug_info(max_code, current);
+		if (options.debug) {
+			print_debug_info(current);
 			print_stack_info(current, Stack_Hash);
 		}
 

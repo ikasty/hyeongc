@@ -5,12 +5,14 @@
 #include "token.h"
 #include "parser.h"
 #include "parser_state.h"
+#include "options.h"
 
 struct Code *code_head, *code_before;
 struct State state;
 
-struct Code *parse (int *codenum, char *filename)
+struct Code *parse (char *filename)
 {
+	int codenum;
 	FILE *ifp = fopen(filename, "r");
 	if (ifp == NULL) return NULL;
 
@@ -19,12 +21,12 @@ struct Code *parse (int *codenum, char *filename)
 
 	state.token = getToken(ifp);
 
-	*codenum = 0;
+	codenum = 0;
 	while (state.token)
 	{
 		Parse_token(&state);
 		if (!state.code->opcode) continue;
-		state.code->code_num = ++*codenum;
+		state.code->code_num = ++codenum;
 		if (!state.token) break;
 
 		code_before = state.code;
@@ -37,6 +39,7 @@ struct Code *parse (int *codenum, char *filename)
 		state.code = code_before;
 	}
 	state.code->next = code_head;
+	options.max_len = codenum;
 
 	return code_head;
 }

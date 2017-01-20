@@ -3,6 +3,6 @@
 
 #include "code.h"
 
-struct Code *parse (int *, char *);
+struct Code *parse (char *);
 
 #endif
