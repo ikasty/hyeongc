@@ -6,7 +6,7 @@
 #include "debug.h"
 
 #define LANG_VER "v0.4.4"
-#define COMP_VER "v0.4.4"
+#define COMP_VER "v0.4.4.2"
 
 struct {
 	int debug, parseonly;

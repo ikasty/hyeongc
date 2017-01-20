@@ -1,7 +1,7 @@
 혀엉씨
 ===========
 
-[난해한 혀엉...언어 v0.4.4](https://gist.github.com/xnuk/d9f883ede568d97caa158255e4b4d069/836a208b5d9fe729eb0d2fd9bf73aec7dc155ffb)의 C 구현체 혀엉씨 v0.4.4
+[난해한 혀엉...언어 v0.4.4](https://gist.github.com/xnuk/d9f883ede568d97caa158255e4b4d069/836a208b5d9fe729eb0d2fd9bf73aec7dc155ffb)의 C 구현체 혀엉씨 v0.4.4.2
 
 모든 [해석 케이스](https://github.com/xnuk/hyeong-testcases) 구현 (example/parse-test 참조)
 
@@ -32,9 +32,6 @@ gcc 와 make가 있는 Unix-like 시스템에서 컴파일 가능함
 * 유리수 분모/분자 각각 부호 있는 최소한 64비트 이상의 정수 범위
 * 디버그 모드
 * 파서 결과만 출력 가능
-
-## 미구현 언어 명세
-* 2바이트 이상의 유니코드 출력
 
 ## 변경된, 또는 구체화된 언어 명세
 * 하트 구역의 <code>?</code>와 <code>/</code>는 해당 토큰 전후에 하트 토큰이 없어도 정상 작동함

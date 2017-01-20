@@ -2,11 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "unicode.h"
 #include "token.h"
-
-int isKoreanUnicode (int32_t);
-int getUlen (char *);
-int32_t getUnicode (char *);
 
 struct Token *getToken (FILE *ifp)
 {
@@ -26,7 +23,7 @@ struct Token *getToken (FILE *ifp)
 		offset = 0;
 		while (*p)
 		{
-			int len = getUlen(p);
+			int len = getUTF8Len(p);
 			if (i+len >= INPUT_BUFFER) {
 				for (offset = 0; *p; offset++, p++) inputs[offset] = *p;
 				break;
@@ -84,37 +81,4 @@ struct Token *getToken (FILE *ifp)
 	}
 
 	return token_head;
-}
-
-int isKoreanUnicode (int32_t unicode) {
-	return unicode >= 0xAC00 && unicode <= 0xD7A3;
-}
-
-int getUlen (char *p)
-{
-	int flag = 0x80, len;
-	for (len = *p & flag ? 0:1; *p & flag; flag>>=1, len++);
-	return len;
-}
-
-int32_t getUnicode (char *p)
-{
-	int32_t res = 0;
-	unsigned char *x = (unsigned char*)p;
-	int len = getUlen(x);
-	switch (len) {
-	case 1:
-		res = *x; break;
-	case 2:
-		res = (x[0] & 0300) << 6 | (x[1] - 0200);
-		break;
-	case 3:
-		res = (x[0] - 0340) << 12 | (x[1] - 0200) << 6 | (x[2] - 0200);
-		break;
-	case 4:
-		res = (x[0] - 0360) << 18 | (x[1] - 0200) << 12;
-		res|= (x[2] - 0200) << 6 | (x[3] - 0200);
-		break;
-	}
-	return res;
 }

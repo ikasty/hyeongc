@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "interpreter.h"
 #include "debug.h"
 #include "value.h"
+#include "unicode.h"
+#include "interpreter.h"
 
 struct Pointers {
 	int tag;
@@ -11,7 +12,8 @@ struct Pointers {
 	struct Pointers *next;
 } POINTER_NULL;
 
-struct Stack *Stack_Hash[10], *stack_stdin, *stack_stdout, *stack_stderr, *stack_current;
+struct Stack *Stack_Hash[10];
+struct Stack *stack_stdin, *stack_stdout, *stack_stderr, *stack_current;
 struct Pointers *Pointers[12];
 struct Code *current, *ref;
 
@@ -41,11 +43,19 @@ void push (struct Stack *s, struct Value *v)
 	if (s == stack_stdin) {
 	} else if (s == stack_stdout) {
 		if (v->nan) printf("너무 커엇...");
-		else if (v->top >= 0) putchar(v->top / v->bottom); // unicode change
+		else if (v->top >= 0) {
+			char *s = getUTF8(v->top / v->bottom);
+			printf("%s", s);
+			free(s);
+		}
 		else printf("%lld", -v->top / v->bottom);
 	} else if (s == stack_stderr) {
 		if (v->nan) fprintf(stderr, "너무 커엇...");
-		else if (v->top > 0) putc(v->top / v->bottom, stderr); // unicode change
+		else if (v->top > 0) {
+			char *s = getUTF8(v->top / v->bottom);
+			fprintf(stderr, "%s", s);
+			free(s);
+		}
 		else fprintf(stderr, "%lld", -v->top / v->bottom);
 	} else {
 		v->stackp = s->value;
@@ -244,7 +254,8 @@ void interpret(struct Code *code, int debug, int max_code)
 		}
 
 		(*operator[current->opcode])(current, NULL);
-		if (current->tree) (*operator[current->tree->opcode])(current, current->tree);
+		if (current->tree)
+			(*operator[current->tree->opcode])(current, current->tree);
 		else current = current->next;
 	}
 }
