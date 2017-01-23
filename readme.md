@@ -1,7 +1,7 @@
 혀엉씨
 ===========
 
-[난해한 혀엉...언어 v0.4.4](https://gist.github.com/xnuk/d9f883ede568d97caa158255e4b4d069/836a208b5d9fe729eb0d2fd9bf73aec7dc155ffb)의 C 구현체 혀엉씨 v0.4.4.2
+[난해한 혀엉...언어 v0.4.5](https://gist.github.com/xnuk/d9f883ede568d97caa158255e4b4d069/dcb12c9f727a8d3cbcbd362078e165e124caadc6)의 C 구현체 혀엉씨 v0.4.5.1
 
 모든 [해석 케이스](https://github.com/xnuk/hyeong-testcases) 구현 (example/parse-test 참조)
 
@@ -11,7 +11,7 @@
 #### 옵션
 * -v, --version, -h, --help
 
-    도움말 출력
+    도움말 및 버전 출력
 * -d, --debug
 
     실행 시 디버그 메시지를 함께 출력
@@ -47,4 +47,4 @@ gcc 와 make가 있는 Unix-like 시스템에서 컴파일 가능함
 > 예시: 현재 스택 상태가 <code>-> (1/3) 5 7</code>인 경우, (1/3)을 뽑아 0으로 비교한다.  
 > 예시: 현재 스택 상태가 <code>-></code>인 경우, (NaN)을 뽑아 비교하며, 항상 뒷부분 구역을 선택한다.
 
-* 0번 스택에 넣어지는 값들은 무시된다.
+* 0번 스택이 비어있는 경우에는 표준 입력에서 유니코드 문자를 가져와, 0번 스택에 역순으로 채워넣는다. (즉, 맨 첫 글자가 스택의 맨 위에 위치하도록 넣는다.)

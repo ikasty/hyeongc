@@ -7,8 +7,8 @@
 #include "debug.h"
 #include "options.h"
 
-#define LANG_VER "v0.4.4"
-#define COMP_VER "v0.4.4.2"
+#define LANG_VER "v0.4.5"
+#define COMP_VER "v0.4.5.1"
 
 struct Options options;
 

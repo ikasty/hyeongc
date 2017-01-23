@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <inttypes.h>
 
@@ -71,4 +72,29 @@ char *getUTF8 (int32_t unicode)
 	}
 
 	return utf8;
+}
+
+int32_t getcUnicode (char *buffer, const int len, int *pos, FILE *ifp)
+{
+	char *p = &buffer[*pos];
+	while (*p == 0)
+	{
+		p = fgets(buffer, len, ifp);
+		if (!p) return 0;
+		*pos = 0;
+	}
+
+	int count = getUTF8Len(p);
+	if (*pos + count >= len) {
+		int offset;
+		for (offset = 0; *p; offset++, p++) buffer[offset] = *p;
+		fgets(buffer + offset, len - offset, ifp);
+		*pos = 0;
+		return getcUnicode(buffer, len, pos, ifp);
+	}
+
+	int32_t unicode = getUnicode(p);
+	*pos += count;
+
+	return unicode;
 }

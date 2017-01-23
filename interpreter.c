@@ -18,6 +18,9 @@ struct Stack *stack_stdin, *stack_stdout, *stack_stderr, *stack_current;
 struct Pointers *Pointers[12];
 struct Code *current, *ref;
 
+void push (struct Stack *s, struct Value *v);
+struct Value *pop (struct Stack *s);
+
 struct Stack *getStack (int d)
 {
 	if (d == -1) {
@@ -39,10 +42,39 @@ struct Stack *getStack (int d)
 	return s;
 }
 
+int getStdin ()
+{
+	static char buffer[80];
+	static int pos;
+	int32_t unicode;
+	int flag = 0;
+
+	struct Stack *stack_temp = getStack(-1); // get temp stack
+	struct Value *v;
+
+	while (unicode = getcUnicode(buffer, 80, &pos, stdin))
+	{
+		flag = 1;
+		v = getNewValue();
+		v->bottom = 1;
+		v->top = unicode;
+		push(stack_temp, v);
+	}
+
+	while (stack_temp->value)
+	{
+		v = pop(stack_temp);
+		push(stack_stdin, v);
+	}
+
+	free(stack_temp);
+
+	return flag;
+}
+
 void push (struct Stack *s, struct Value *v)
 {
-	if (s == stack_stdin) {
-	} else if (s == stack_stdout) {
+	if (s == stack_stdout) {
 		if (v->nan) printf("너무 커엇...");
 		else if (v->top >= 0) {
 			char *s = getUTF8(v->top / v->bottom);
@@ -68,9 +100,7 @@ void push (struct Stack *s, struct Value *v)
 struct Value *pop (struct Stack *s)
 {
 	struct Value *v;
-	if (s == stack_stdin) {
-		// stack_stdin control
-	} else if (s == stack_stdout) {
+	if (s == stack_stdout) {
 		if (options.debug) print_program_end(0);
 		exit(0);
 	} else if (s == stack_stderr) {
@@ -80,6 +110,10 @@ struct Value *pop (struct Stack *s)
 		if (options.debug) options.pop_stack = s->stack_value;
 		v = s->value;
 		if (!v) {
+			if (s == stack_stdin && getStdin()) {
+				return pop(s);
+			}
+
 			v = getNewValue();
 			v->nan = 1;
 		} else {

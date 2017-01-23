@@ -35,6 +35,7 @@ void print_debug_info (struct Code *code)
 	int max_len = options.max_len;
 	for (len = 0; max_len; max_len /= 10, len++);
 
+	fflush(stdout);
 	printf("[%*d] ", len, code->code_num);
 	printf("%s %d %d", codestr[code->opcode], code->charcnt, code->dotcnt);
 	if (code->tree) putchar(' '), print_tree(code->tree);
