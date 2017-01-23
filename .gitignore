@@ -5,6 +5,7 @@ Release/
 *.opendb
 *.sln
 *.vcxproj
+*.vcxproj.user
 *.filters
 *.o
 hyeong

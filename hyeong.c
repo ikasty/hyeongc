@@ -1,4 +1,4 @@
-#include <stdio.h>
+﻿#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -9,6 +9,8 @@
 
 #define LANG_VER "v0.4.5"
 #define COMP_VER "v0.4.5.1"
+
+#include "locale.h"
 
 struct Options options;
 
