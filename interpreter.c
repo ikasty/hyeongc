@@ -299,10 +299,13 @@ void interpret(struct Code *code)
 			print_value_start();
 		}
 
+		struct Code *temp = current;
+
 		(*operator[current->opcode])(current, NULL);
 		if (current->tree)
 			(*operator[current->tree->opcode])(current, current->tree);
-		else current = current->next;
+
+		if (current == temp) current = current->next;
 
 		if (options.debug) print_value_end();
 	}
