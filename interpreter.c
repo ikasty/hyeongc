@@ -31,7 +31,7 @@ struct Stack *getStack (int d)
 	}
 
 	struct Stack *s = Stack_Hash[d % 10];
-	while (s->stack_value != d) s = s->next;
+	while (s && s->stack_value != d) s = s->next;
 	if (!s) {
 		struct Stack *newstack = malloc(sizeof(struct Stack));
 		*newstack = STACK_NULL;
