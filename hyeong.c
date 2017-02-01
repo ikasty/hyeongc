@@ -26,6 +26,7 @@ void help (int code)
 		"\t-h, --help          현재 메시지를 출력합니다.\n"
 		"\t-d, --debug         디버그 메시지를 출력합니다.\n"
 		"\t-D, --strict-debug  출력값이 존재할 때만 디버그 메시지를 출력합니다.\n"
+		"\t-p <code_no>        code_no에서 실행을 중단하고, 디버그 모드로 전환합니다.\n"
 		"\t--parse-only        실행하지 않고, 파싱 결과만을 출력합니다.\n"
 	);
 
@@ -45,6 +46,10 @@ void getOptions (int argc, char **argv)
 		if (!strcmp(argv[i], "-v")) return help(0);
 		if (!strcmp(argv[i], "-h")) return help(0);
 
+		if (!strcmp(argv[i], "-p") && ++i < argc) {
+			sscanf(argv[i], "%d", &options.stop_point);
+		}
+
 		if (!strcmp(argv[i], "--debug"))		options.debug = 1;
 		if (!strcmp(argv[i], "--strict-debug"))	options.debug = 2;
 		if (!strcmp(argv[i], "--version"))		return help(0);
@@ -56,6 +61,7 @@ void getOptions (int argc, char **argv)
 
 int main (int argc, char **argv)
 {
+	options.stop_point = -1;
 	getOptions(argc, argv);
 
 	if (!options.filename) {

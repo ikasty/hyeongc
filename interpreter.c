@@ -296,6 +296,7 @@ void interpret(struct Code *code)
 
 	while (1)
 	{
+		if (current->code_num == options.stop_point) options.debug = 1;
 		if (options.debug == 1 ||
 		   (options.debug == 2 && is_print))
 		{

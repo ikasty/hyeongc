@@ -3,6 +3,7 @@
 
 struct Options{
 	int debug, parseonly;
+	int stop_point;
 	int max_len;
 	char *filename;
 	void *last_push;

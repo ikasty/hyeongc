@@ -21,7 +21,7 @@ struct Code *parse (char *filename)
 
 	state.token = getToken(ifp);
 
-	codenum = 0;
+	codenum = -1;
 	while (state.token)
 	{
 		Parse_token(&state);

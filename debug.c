@@ -46,7 +46,7 @@ void print_stack_info (	struct Code *code,
 						struct Stack *stack_current,
 						struct Stack *Stack_Hash[10])
 {
-	printf("현재 스택:%d\n", stack_current->stack_value);
+	printf("현재 스택: %d\n", stack_current->stack_value);
 	for (int i = 0; i < 10; i++)
 	{
 		struct Stack *stack_debug = Stack_Hash[i];
