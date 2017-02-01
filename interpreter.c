@@ -38,7 +38,8 @@ struct Stack *getStack (int d)
 		struct Stack *newstack = malloc(sizeof(struct Stack));
 		*newstack = STACK_NULL;
 		newstack->stack_value = d;
-		Stack_Hash[d % 10] = newstack->next = Stack_Hash[d % 10];
+		newstack->next = Stack_Hash[d % 10];
+		Stack_Hash[d % 10] = newstack;
 		s = newstack;
 	}
 	return s;
