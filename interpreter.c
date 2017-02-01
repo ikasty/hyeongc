@@ -236,8 +236,10 @@ void Op_Save (struct Code *code, struct Heart_Tree *tree)
 		Pointers[tree->value] = pointer;
 	}
 
-	if (!pointer->code) pointer->code = current;
-	else {
+	if (!pointer->code) {
+		pointer->code = current;
+		pointer->tag = tag;
+	} else {
 		current = pointer->code;
 		ref = code;
 	}
