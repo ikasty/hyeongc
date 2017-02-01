@@ -21,6 +21,8 @@ struct Code *current, *ref;
 void push (struct Stack *s, struct Value *v);
 struct Value *pop (struct Stack *s);
 
+int is_print;
+
 struct Stack *getStack (int d)
 {
 	if (d == -1) {
@@ -75,6 +77,7 @@ int getStdin ()
 void push (struct Stack *s, struct Value *v)
 {
 	if (s == stack_stdout) {
+		is_print = 1;
 		if (v->nan) printf("너무 커엇...");
 		else if (v->top >= 0) {
 			char *s = getUTF8(v->top / v->bottom);
@@ -83,6 +86,7 @@ void push (struct Stack *s, struct Value *v)
 		}
 		else printf("%lld", -v->top / v->bottom);
 	} else if (s == stack_stderr) {
+		is_print = 1;
 		if (v->nan) fprintf(stderr, "너무 커엇...");
 		else if (v->top > 0) {
 			char *s = getUTF8(v->top / v->bottom);
@@ -287,16 +291,19 @@ void interpret(struct Code *code)
 	stack_current->stack_value = 3;
 	current = code;
 
-	if (options.debug) print_debug_start();
+	if (options.debug == 1) print_debug_start();
 
 	while (1)
 	{
-		if (options.debug) {
+		if (options.debug == 1 ||
+		   (options.debug == 2 && is_print))
+		{
 			puts("");
 			print_debug_info(current);
-			print_stack_info(current, Stack_Hash);
+			print_stack_info(current, stack_current, Stack_Hash);
 			getchar();
-			print_value_start();
+			if (options.debug == 1) print_value_start();
+			is_print = 0;
 		}
 
 		struct Code *temp = current;
@@ -307,6 +314,6 @@ void interpret(struct Code *code)
 
 		if (current == temp) current = current->next;
 
-		if (options.debug) print_value_end();
+		if (options.debug == 1) print_value_end();
 	}
 }

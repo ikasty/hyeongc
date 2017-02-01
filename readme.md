@@ -1,7 +1,7 @@
 혀엉씨
 ===========
 
-[난해한 혀엉...언어 v0.4.5](https://gist.github.com/xnuk/d9f883ede568d97caa158255e4b4d069/dcb12c9f727a8d3cbcbd362078e165e124caadc6)의 C 구현체 혀엉씨 v0.4.5.1
+[난해한 혀엉...언어 v0.4.5](https://gist.github.com/xnuk/d9f883ede568d97caa158255e4b4d069/dcb12c9f727a8d3cbcbd362078e165e124caadc6)의 C 구현체 혀엉씨 v0.4.5.2
 
 모든 [해석 케이스](https://github.com/xnuk/hyeong-testcases) 구현 (example/parse-test 참조)
 
@@ -15,6 +15,9 @@
 * -d, --debug
 
     실행 시 디버그 메시지를 함께 출력
+* -D, --strict-debug
+
+    출력 값이 있을 경우에만 디버그 메시지를 출력
 * --parse-only
 
     실행하지 않고, 파싱 결과만을 출력

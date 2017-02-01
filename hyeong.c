@@ -8,7 +8,7 @@
 #include "options.h"
 
 #define LANG_VER "v0.4.5"
-#define COMP_VER "v0.4.5.1"
+#define COMP_VER "v0.4.5.2"
 
 #include "locale.h"
 
@@ -23,9 +23,10 @@ void help (int code)
 		" 사용법: hyeongc [options] [--] 파일명\n\n"
 
 		"\t-v, --version,\n"
-		"\t-h, --help     현재 메시지를 출력합니다.\n"
-		"\t-d, --debug    디버그 메시지를 출력합니다.\n"
-		"\t--parse-only   실행하지 않고, 파싱 결과만을 출력합니다.\n"
+		"\t-h, --help          현재 메시지를 출력합니다.\n"
+		"\t-d, --debug         디버그 메시지를 출력합니다.\n"
+		"\t-D, --strict-debug  출력값이 존재할 때만 디버그 메시지를 출력합니다.\n"
+		"\t--parse-only        실행하지 않고, 파싱 결과만을 출력합니다.\n"
 	);
 
 	exit(code);
@@ -40,10 +41,12 @@ void getOptions (int argc, char **argv)
 		if (!strcmp(argv[i], "--")) {i++; break;}
 
 		if (!strcmp(argv[i], "-d")) options.debug = 1;
+		if (!strcmp(argv[i], "-D")) options.debug = 2;
 		if (!strcmp(argv[i], "-v")) return help(0);
 		if (!strcmp(argv[i], "-h")) return help(0);
 
 		if (!strcmp(argv[i], "--debug"))		options.debug = 1;
+		if (!strcmp(argv[i], "--strict-debug"))	options.debug = 2;
 		if (!strcmp(argv[i], "--version"))		return help(0);
 		if (!strcmp(argv[i], "--help"))			return help(0);
 		if (!strcmp(argv[i], "--parse-only"))	options.parseonly = 1;

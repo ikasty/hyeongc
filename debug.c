@@ -42,9 +42,11 @@ void print_debug_info (struct Code *code)
 	puts("");
 }
 
-void print_stack_info (struct Code *code, struct Stack *Stack_Hash[10])
+void print_stack_info (	struct Code *code,
+						struct Stack *stack_current,
+						struct Stack *Stack_Hash[10])
 {
-	printf("스택 정보:\n");
+	printf("현재 스택:%d\n", stack_current->stack_value);
 	for (int i = 0; i < 10; i++)
 	{
 		struct Stack *stack_debug = Stack_Hash[i];
@@ -85,17 +87,17 @@ void print_stack_info (struct Code *code, struct Stack *Stack_Hash[10])
 
 void print_value_start ()
 {
-	printf("출력 내용: \033[1;36m");
+	puts("출력 내용: \033[1;36m");
 }
 
 void print_value_end ()
 {
-	printf("\033[0m\n");
+	puts("\033[0m\n");
 }
 
 void print_program_end(int endcode)
 {
-	printf("\033[0m");
-	if (endcode) printf("\n\n프로그램이 비정상적으로 종료되었습니다\n");
-	else printf("\n\n프로그램이 정상적으로 종료되었습니다\n");
+	puts("\033[0m");
+	if (endcode) puts("\n\n프로그램이 비정상적으로 종료되었습니다\n");
+	else puts("\n\n프로그램이 정상적으로 종료되었습니다\n");
 }

@@ -6,7 +6,7 @@
 
 void print_debug_start ();
 void print_debug_info (struct Code *);
-void print_stack_info (struct Code *, struct Stack *[10]);
+void print_stack_info (struct Code *, struct Stack *, struct Stack *[10]);
 
 void print_value_start ();
 void print_value_end ();
