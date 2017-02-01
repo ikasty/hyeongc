@@ -1,11 +1,7 @@
 #ifndef VALUE_H
 #define VALUE_H
 
-struct Value {
-	int nan;
-	long long top, bottom;
-	struct Value *stackp;
-} VALUE_NULL;
+#include "code.h"
 
 struct Value *getNewValue ();
 struct Value *ValueAdd (struct Value *const, const struct Value *);

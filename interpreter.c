@@ -1,17 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "code.h"
 #include "debug.h"
 #include "value.h"
 #include "unicode.h"
 #include "interpreter.h"
 #include "options.h"
-
-struct Pointers {
-	int tag;
-	struct Code *code;
-	struct Pointers *next;
-} POINTER_NULL;
 
 struct Stack *Stack_Hash[10];
 struct Stack *stack_stdin, *stack_stdout, *stack_stderr, *stack_current;
@@ -140,8 +135,8 @@ void Op_CompL (struct Code *code, struct Heart_Tree *tree);
 void Op_CompZ (struct Code *code, struct Heart_Tree *tree);
 
 void (*operator[OP_LENGTH])(struct Code *, struct Heart_Tree *) = {NULL,
-	&Op_Push, &Op_Add, &Op_Mul, &Op_Neg, &Op_Inv, &Op_Copy,
-	&Op_Save, &Op_Ref, &Op_CompL, &Op_CompZ
+	Op_Push, Op_Add, Op_Mul, Op_Neg, Op_Inv, Op_Copy,
+	Op_Save, Op_Ref, Op_CompL, Op_CompZ
 };
 
 void Op_Push (struct Code *code, struct Heart_Tree *tree)
@@ -303,6 +298,7 @@ void interpret(struct Code *code)
 			puts("");
 			print_debug_info(current);
 			print_stack_info(current, stack_current, Stack_Hash);
+			print_heart_info(Pointers, ref);
 			getchar();
 			if (options.debug == 1) print_value_start();
 			is_print = 0;
@@ -312,7 +308,7 @@ void interpret(struct Code *code)
 
 		(*operator[current->opcode])(current, NULL);
 		if (current->tree)
-			(*operator[current->tree->opcode])(current, current->tree);
+			operator[current->tree->opcode](current, current->tree);
 
 		if (current == temp) current = current->next;
 

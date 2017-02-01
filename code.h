@@ -9,6 +9,12 @@ enum OPCODE {
 	OP_LENGTH
 };
 
+struct Value {
+	int nan;
+	long long top, bottom;
+	struct Value *stackp;
+} VALUE_NULL;
+
 struct Code;
 
 struct Heart_Tree {
@@ -24,5 +30,17 @@ struct Code {
 	struct Code *next;
 	struct Heart_Tree *tree;
 } CODE_NULL;
+
+struct Pointers {
+	int tag;
+	struct Code *code;
+	struct Pointers *next;
+} POINTER_NULL;
+
+struct Stack {
+	int stack_value;
+	struct Stack *next;
+	struct Value *value;
+} STACK_NULL;
 
 #endif

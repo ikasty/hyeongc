@@ -85,6 +85,33 @@ void print_stack_info (	struct Code *code,
 	}
 }
 
+void print_heart_info (struct Pointers *Pointers[12], struct Code *ref)
+{
+	puts("등록된 명령어: ");
+
+	int len, max_len = options.max_len;
+	for (len = 0; max_len; max_len /= 10, len++);
+	for (int i = 0; i < 12; i++)
+	{
+		int is_print = 0;
+		struct Pointers *p = Pointers[i];
+		while (p)
+		{
+			printf("\t");
+
+			struct Code *code = p->code;
+			if (code == ref) printf("*");
+			printf("(%d, %s) [%*d] ", p->tag, heartstr[i], len, code->code_num);
+			printf("%s ", codestr[code->opcode]);
+			printf("%d %d", code->charcnt, code->dotcnt);
+			if (code->tree) putchar(' '), print_tree(code->tree);
+			p = p->next;
+			is_print = 1;
+		}
+		if (is_print) puts("");
+	}
+}
+
 void print_value_start ()
 {
 	puts("출력 내용: \033[1;36m");
