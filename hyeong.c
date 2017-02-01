@@ -8,7 +8,7 @@
 #include "options.h"
 
 #define LANG_VER "v0.4.5"
-#define COMP_VER "v0.4.5.2"
+#define COMP_VER "v0.4.5.3"
 
 #include "locale.h"
 
